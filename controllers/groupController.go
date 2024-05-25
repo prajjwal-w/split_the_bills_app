@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// create group
+// create group handler
 func CreateGroup() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var group models.Group

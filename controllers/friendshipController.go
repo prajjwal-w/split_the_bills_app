@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Add friend handler
 func Addfriend() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var frd models.AddFriend

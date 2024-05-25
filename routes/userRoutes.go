@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// user routes
 func UserRoutes(routes *gin.Engine) {
 	routes.PUT("/users/", controllers.ResetPassword())
 	routes.Use(middleware.Authenticate())

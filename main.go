@@ -9,6 +9,7 @@ import (
 
 const port = "8080"
 
+// server
 func main() {
 	router := gin.New()
 	router.Use(gin.Logger())

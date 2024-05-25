@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+//group
 type Group struct {
 	GroupId     int64         `json:"group_id"`
 	GroupName   string        `json:"group_name"`

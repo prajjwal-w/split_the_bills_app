@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+//user
 type User struct {
 	User_Id       int64     `json:"user_id"`
 	First_Name    string    `json:"first_name" validate:"required"`

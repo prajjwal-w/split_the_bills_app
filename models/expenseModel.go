@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+//Expense
 type AddExpense struct {
 	ExpenseId   int64        `json:"expense_id"`
 	Amount      float64      `json:"amount"`
@@ -12,6 +13,7 @@ type AddExpense struct {
 	Created_at  time.Time    `json:"created_at"`
 }
 
+//Splitusers
 type SplitUsers struct {
 	ExpneseId   int64   `json:"expense_id"`
 	UserId      int64   `json:"user_id"`

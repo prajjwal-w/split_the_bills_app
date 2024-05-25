@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// add expense service
 func AddExpense(exp *models.AddExpense) (*models.AddExpense, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// add expense handler
 func AddExpenses() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var expense *models.AddExpense

@@ -1,4 +1,4 @@
-1: User Table
+1: User Table create
 
 CREATE TABLE users (
 	user_id SERIAL PRIMARY KEY,

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// func expense routes
 func ExpenseRoutes(routes *gin.Engine) {
 	routes.POST("/expenses", controllers.AddExpenses())
 }

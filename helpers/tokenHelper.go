@@ -2,13 +2,25 @@ package helpers
 
 import (
 	"fmt"
+	"log"
 	"myJwtAuth/service"
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/joho/godotenv"
 )
 
-var SECRET_KEY = "prajjwalsSecretkey@18"
+var SECRET_KEY string
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	SECRET_KEY = os.Getenv("SECRET_KEY")
+}
 
 type SignedDetails struct {
 	Email    string

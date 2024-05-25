@@ -73,7 +73,7 @@ func GetUserByPhone(phone string) (*models.User, error) {
 func InsertUser(user models.User) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	//defer database.CloseDbConn(db)
+
 	var userId int64
 	query := `INSERT INTO USERS (first_name, last_name, password, phone, email, 
 		      token, user_type, refresh_token, created_at, updated_at) values ($1, $2, $3, $4, $5, $6,$7,$8,$9,$10) 

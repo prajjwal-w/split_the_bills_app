@@ -24,7 +24,3 @@ func IsPhone(phone string) bool {
 	return re.MatchString(phone)
 
 }
-
-// func StrToInt(v string) int64{
-
-// }

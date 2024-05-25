@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// group routes
 func GroupRoutes(routes *gin.Engine) {
 	routes.Use(middleware.Authenticate())
 	routes.POST("/groups", controllers.CreateGroup())

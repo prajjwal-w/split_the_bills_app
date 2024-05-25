@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// sign up handler
 func SignUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var user models.User
@@ -70,6 +71,7 @@ func SignUp() gin.HandlerFunc {
 	}
 }
 
+// login handler
 func Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var login models.LoginUser
@@ -130,6 +132,7 @@ func Login() gin.HandlerFunc {
 	}
 }
 
+// get users handler
 func GetUsers() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if err := helpers.CheckUserType(c, "ADMIN"); err != nil {

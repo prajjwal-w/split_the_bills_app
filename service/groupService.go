@@ -103,7 +103,6 @@ func GetAllGroupsbyUser(user_id int64) ([]*models.Group, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	//retrival of expenses in the below query is remaining make note
 	query := `SELECT
 	            g.group_id, g.group_name, g.description, g.created_by , u.user_id, u.first_name, u.last_name, u.email, u.phone , e.expense_id, e.amount,
 				e.description, e.paid_by, e.created_at 

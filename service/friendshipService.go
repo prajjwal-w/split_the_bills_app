@@ -16,12 +16,6 @@ func AddFriend(user_id int64, frdsUserId int64) (int64, error) {
 	var frdship_id int64
 	query := `INSERT INTO friendships(user1_id, user2_id) VALUES($1,$2) RETURNING friendship_id`
 
-	// stmt, err := db.PrepareContext(ctx, query)
-	// if err != nil {
-	// 	return 0, fmt.Errorf("error preparing statement: %v", err)
-	// }
-	// defer stmt.Close()
-
 	err := db.QueryRowContext(ctx, query,
 		user_id,
 		frdsUserId).Scan(&frdship_id)
