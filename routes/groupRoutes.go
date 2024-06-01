@@ -13,6 +13,6 @@ func GroupRoutes(routes *gin.Engine) {
 	routes.POST("/groups", controllers.CreateGroup())
 	routes.POST("/groups/adduser", controllers.AddUsersInAGroup())
 	routes.GET("/groups/:user_id", controllers.GetAllGroups())
-	//routes.DELETE("/users/:user_id", controllers.DeleteUser())
+	routes.DELETE("/groups/deleteUser", controllers.RemoveUserFromGroup())
 
 }

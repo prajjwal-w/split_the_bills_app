@@ -61,7 +61,7 @@ func GetAllGroups() gin.HandlerFunc {
 // add a user in group
 func AddUsersInAGroup() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var user models.AddUserGrp
+		var user models.GrpUser
 
 		if err := c.BindJSON(&user); err != nil {
 			log.Printf("error while binding JSON: %v", err)
@@ -79,5 +79,29 @@ func AddUsersInAGroup() gin.HandlerFunc {
 
 		log.Printf("User %v added successfully to group %v", user.UserId, user.GroupId)
 		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("User %v added successfully to group %v", user.UserId, user.GroupId)})
+	}
+}
+
+// remove user from group
+func RemoveUserFromGroup() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var grpUser *models.GrpUser
+
+		if err := c.BindJSON(&grpUser); err != nil {
+			log.Printf("Error while json binding")
+			c.JSON(http.StatusBadRequest, gin.H{"error": err})
+			return
+		}
+
+		err := service.RemoveUserFromGroup(grpUser)
+		if err != nil {
+			log.Printf("Error while removing user:%v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			return
+		}
+
+		log.Printf("user %v successfully removed from the %v group", grpUser.UserId, grpUser.GroupId)
+		c.JSON(http.StatusOK, gin.H{"message": "user removed successfully"})
+
 	}
 }

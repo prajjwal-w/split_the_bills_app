@@ -135,7 +135,7 @@ func GetAllGroupsbyUser(user_id int64) ([]*models.Group, error) {
 		var group_id, created_by int64
 		var group_name, description string
 		grp_member := &models.GroupUser{}
-		grp_exp := &models.AddExpense{}
+		grp_exp := &models.Expense{}
 
 		err := rows.Scan(
 			&group_id,
@@ -168,7 +168,7 @@ func GetAllGroupsbyUser(user_id int64) ([]*models.Group, error) {
 				Description: description,
 				CreatedBy:   created_by,
 				Members:     []*models.GroupUser{grp_member},
-				Expenses:    []*models.AddExpense{grp_exp},
+				Expenses:    []*models.Expense{grp_exp},
 			}
 		}
 
@@ -182,5 +182,21 @@ func GetAllGroupsbyUser(user_id int64) ([]*models.Group, error) {
 	}
 
 	return grpList, nil
+
+}
+
+// remove user frm group
+func RemoveUserFromGroup(grpuser *models.GrpUser) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	query := `DELETE FROM group_users WHERE group_id = $1 and user_id = $2`
+
+	_, err := db.ExecContext(ctx, query, grpuser.GroupId, grpuser.UserId)
+	if err != nil {
+		return fmt.Errorf("error while deleting user from group")
+	}
+
+	return nil
 
 }

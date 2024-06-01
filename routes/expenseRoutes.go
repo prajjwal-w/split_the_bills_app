@@ -9,4 +9,5 @@ import (
 // func expense routes
 func ExpenseRoutes(routes *gin.Engine) {
 	routes.POST("/expenses", controllers.AddExpenses())
+	routes.PUT("/expenses", controllers.SettleUpExpense())
 }

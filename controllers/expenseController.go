@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"myJwtAuth/models"
 	"myJwtAuth/service"
@@ -13,7 +14,7 @@ import (
 // add expense handler
 func AddExpenses() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var expense *models.AddExpense
+		var expense *models.Expense
 
 		if err := c.BindJSON(&expense); err != nil {
 			log.Println("error while binding expense json")
@@ -35,16 +36,40 @@ func AddExpenses() gin.HandlerFunc {
 	}
 }
 
-// func UpdateSplitExpense() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		var updateExp *models.SplitUsers
+func SettleUpExpense() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var settleReq *models.SettleAmt
 
-// 		if err := c.BindJSON(&updateExp); err != nil {
-// 			log.Printf("error while updateExp json binding: %v", err)
-// 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 			return
-// 		}
+		if err := c.BindJSON(&settleReq); err != nil {
+			log.Println("error while binding expense json")
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-// 		exp, err := service.UpdateExpense(updateExp)
-// 	}
-// }
+		err := service.SettleUpExpense(settleReq)
+		if err != nil {
+			log.Println("error while settling up the expense")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		log.Println("expense settled successfully")
+		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("Expense between %v and %v of amount %v settled", settleReq.Payee_id, settleReq.Payer_id, settleReq.Amount)})
+	}
+}
+
+func GetUnsettledAmountByUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		user_id := c.Param("user_id")
+
+		statements, err := service.GetUnsettledAmountByUser(user_id)
+		if err != nil {
+			log.Printf("Error while gettings unsettled statement:%v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			return
+		}
+
+		log.Printf("statements retrived successfully")
+		c.JSON(http.StatusOK, gin.H{"msg": "statements retrived successfully", "statements": statements})
+	}
+}
