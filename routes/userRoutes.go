@@ -9,7 +9,7 @@ import (
 
 // user routes
 func UserRoutes(routes *gin.Engine) {
-	routes.PUT("/users/", controllers.ResetPassword())
+	routes.PUT("/users", controllers.ResetPassword())
 	routes.Use(middleware.Authenticate())
 	routes.GET("/users", controllers.GetUsers())
 	routes.GET("/users/:user_id", controllers.GetUserbyId())

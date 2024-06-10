@@ -36,19 +36,7 @@ func AddExpense(exp *models.Expense) (*models.Expense, error) {
 		tx.Rollback()
 		return nil, fmt.Errorf("error while creating expense: %v", err.Error())
 	}
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	// //split the expenses
-	// amt := SplitEqual(exp.SplitWith, exp.Amount)
 
-	// splitQuery := `INSERT INTO expense_splits(expense_id, user_id, split_amt, status)
-	//                SELECT $1, unnest($2::int[]), $3`
-
-	// _, err = tx.ExecContext(ctx, splitQuery, exp.ExpenseId, pq.Array(exp.SplitWith), amt)
-	// if err != nil {
-	// 	tx.Rollback()
-	// 	return nil, fmt.Errorf("error while inserting split expenses: %v", err.Error())
-	// }
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	splitquery := `INSERT INTO expense_splits (expense_id, user_id, split_amt, status) VALUES `
 	values := []interface{}{}
 	placeholders := []string{}
@@ -83,6 +71,7 @@ func SplitEqual(users []models.SplitUsers, amt float64) float64 {
 	return splitAmt
 }
 
+// get unsettled amount by user id
 func GetUnsettledAmountByUser(user_id string) ([]*models.Statement, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -130,6 +119,7 @@ func GetUnsettledAmountByUser(user_id string) ([]*models.Statement, error) {
 
 }
 
+// Settle up the expense
 func SettleUpExpense(s *models.SettleAmt) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -191,7 +181,6 @@ func SettleUpExpense(s *models.SettleAmt) error {
 				tx.Rollback()
 				return fmt.Errorf("failed to update split: %v", err)
 			}
-
 			s.Amount -= split.SplitAmt
 		} else {
 			//partially settle this split
@@ -201,7 +190,6 @@ func SettleUpExpense(s *models.SettleAmt) error {
 				tx.Rollback()
 				return fmt.Errorf("failed to update split: %w", err)
 			}
-
 			s.Amount = 0
 		}
 	}

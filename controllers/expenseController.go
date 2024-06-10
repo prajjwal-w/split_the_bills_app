@@ -36,6 +36,7 @@ func AddExpenses() gin.HandlerFunc {
 	}
 }
 
+// Settle Expense
 func SettleUpExpense() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var settleReq *models.SettleAmt
@@ -57,6 +58,7 @@ func SettleUpExpense() gin.HandlerFunc {
 	}
 }
 
+// func get unsettled expense
 func GetUnsettledAmountByUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
