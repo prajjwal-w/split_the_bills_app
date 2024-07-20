@@ -38,6 +38,7 @@ func GenerateTokens(email string, userType string) (string, string, error) {
 	}
 
 	refreshClaims := &SignedDetails{
+		Email: email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(168)).Unix(),
 		},

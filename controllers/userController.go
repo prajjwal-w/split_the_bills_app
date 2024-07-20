@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"myJwtAuth/helpers"
 	"myJwtAuth/models"
@@ -81,11 +82,12 @@ func Login() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+		fmt.Println(login)
 		//search user with the email id
 		user, err := service.GetUserByEmail(login.Email)
 		if err != nil {
 			log.Println("email is incorrect or maybe not registerd")
-			c.JSON(http.StatusNotFound, gin.H{"msg": "user not found or incorrect email", "error": err.Error()})
+			c.JSON(http.StatusUnauthorized, gin.H{"msg": "username or password incorrect"})
 			return
 		}
 		//log.Println(user)
@@ -94,7 +96,7 @@ func Login() gin.HandlerFunc {
 		passwordIsValid, _ := helpers.VerifyPassword(login.Password, user.Password)
 		if !passwordIsValid {
 			log.Println("password incorrect")
-			c.JSON(http.StatusUnauthorized, gin.H{"msg": "incorrect password"})
+			c.JSON(http.StatusUnauthorized, gin.H{"msg": "username or password incorrect"})
 			return
 		}
 		_, err = helpers.ValidateToken(user.Token)
@@ -117,14 +119,17 @@ func Login() gin.HandlerFunc {
 				log.Println("Token updated Successfully!!")
 			}
 
+			user.Token = token
+			user.Refresh_Token = refershToken
+
 			//retrive user from db with the updated tokens
-			userWithNewToken, err := service.GetUserByEmail(login.Email)
-			if err != nil {
-				log.Println(err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err})
-				return
-			}
-			c.JSON(http.StatusOK, userWithNewToken)
+			// userWithNewToken, err := service.GetUserByEmail(login.Email)
+			// if err != nil {
+			// 	log.Println(err)
+			// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			// 	return
+			// }
+			c.JSON(http.StatusOK, user)
 			return
 		}
 
@@ -192,29 +197,72 @@ func DeleteUser() gin.HandlerFunc {
 
 }
 
-func ResetPassword() gin.HandlerFunc {
+func ReqResetPassword() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var resetPass *models.ResetPass
 		if err := c.BindJSON(&resetPass); err != nil {
 			log.Println("error while binding the input")
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		password, err := helpers.HashPassword(resetPass.NewPassword)
+		userExist, err := service.GetUserByEmail(resetPass.Email)
+		if err != nil {
+			log.Println("error while checking user")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		if userExist != nil {
+			token, _, err := helpers.GenerateTokens(userExist.Email, userExist.User_Type)
+			if err != nil {
+				log.Println("error while creating reset pass token")
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+				return
+			}
+
+			err = helpers.PasswordResetMail(userExist.Email, token)
+			if err != nil {
+				log.Println("Error while sending the reset password email")
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+				return
+			}
+		}
+
+	}
+}
+
+func ResetPassword() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var resetPass *models.ResetPass
+
+		if err := c.BindJSON(&resetPass); err != nil {
+			log.Println("error while binding json")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			return
+		}
+
+		_, err := helpers.ValidateToken(resetPass.Token)
+		if err != nil {
+			log.Println("error while validating token or token invalid")
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err})
+			return
+		}
+
+		password, err := helpers.HashPassword(resetPass.Password)
 		if err != nil {
 			log.Println("error while password hashing")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		_, err = service.ResetPassword(resetPass.UserId, password)
+		_, err = service.ResetPassword(resetPass.Email, password)
 		if err != nil {
 			log.Println("error while update password")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"msg": "Password reset sucessfully"})
+		log.Println("Password reset Sucessfully")
+		c.JSON(http.StatusOK, gin.H{"msg": "Password reset sucessfully, redirecting to the login page"})
 
 	}
 }

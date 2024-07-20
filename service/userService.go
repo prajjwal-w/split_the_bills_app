@@ -24,8 +24,8 @@ func GetUserByEmail(userEmail string) (*models.User, error) {
 		&user.First_Name,
 		&user.Last_Name,
 		&user.Password,
-		&user.Email,
 		&user.Phone,
+		&user.Email,
 		&user.Token,
 		&user.User_Type,
 		&user.Refresh_Token,
@@ -209,12 +209,12 @@ func DeleteUserById(userId string) (bool, error) {
 	return true, nil
 }
 
-func ResetPassword(userId int64, newPass string) (bool, error) {
+func ResetPassword(email string, newPass string) (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	query := "UPDATE USERS SET password=$1 WHERE user_id=$2"
-	_, err := db.ExecContext(ctx, query, newPass, userId)
+	query := "UPDATE USERS SET password=$1 WHERE email=$2"
+	_, err := db.ExecContext(ctx, query, newPass, email)
 	if err != nil {
 		return false, err
 	}

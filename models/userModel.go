@@ -23,6 +23,7 @@ type LoginUser struct {
 }
 
 type ResetPass struct {
-	UserId      int64  `json:"userId" validate:"required"`
-	NewPassword string `json:"password" validate:"required"`
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password"`
+	Token    string `json:"token"`
 }
